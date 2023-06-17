@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672  # RabbitMQ default port
+      - 15672:15672  # RabbitMQ management UI
+
+  microservice_a:
+    build:
+      context: ./microservice_A
+    ports:
+      - 5000:5000  # Flask app port
+    volumes:
+      - ./microservice_A:/app
+    depends_on:
+      - rabbitmq
+    command: bash -c "python wait-for-rabbitmq.py && python src/app.py"
+
+  microservice_b:
+    build:
+      context: ./microservice_B
+    volumes:
+      - ./microservice_B:/app
+    depends_on:
+      - rabbitmq
+    command: bash -c "python wait-for-rabbitmq.py && python app.py"
