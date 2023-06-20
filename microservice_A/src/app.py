@@ -1,4 +1,5 @@
 import os
+import threading
 from flask import Flask, request, jsonify
 
 from helper import *
@@ -32,7 +33,6 @@ def upload_file():
         file_path = Path(Path(__file__).resolve().parents[1], f"{UPLOAD_FOLDER}/{filename}").as_posix()
         file.save(file_path)
 
-        # Convert the audio file to 16-bit PCM format
         audio = AudioSegment.from_file(file_path, format="wav")
 
         # Validate the audio file
@@ -42,8 +42,10 @@ def upload_file():
 
         response = {'message': 'Request received. Splitting your file in the background.'}
         threading.Thread(target=process_audio).start()
+        threading.Thread(target=acknowledgments_from_microservice_b).start()
         return jsonify(response)
 
 
 if __name__ == '__main__':
+    setup_logging()
     app.run(host='0.0.0.0', debug=True)

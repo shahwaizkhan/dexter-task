@@ -1,5 +1,6 @@
 import pika
 import time
+import logging
 
 
 def wait_for_rabbitmq():
@@ -9,7 +10,7 @@ def wait_for_rabbitmq():
             connection.close()
             break
         except pika.exceptions.AMQPConnectionError:
-            print('RabbitMQ not available, waiting...')
+            logging.info('RabbitMQ not available, waiting...')
             time.sleep(1)
 
 

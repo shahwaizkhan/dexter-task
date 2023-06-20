@@ -21,8 +21,10 @@ services:
   microservice_b:
     build:
       context: ./microservice_B
+    ports:
+      - 8000:5000  # Flask app port
     volumes:
       - ./microservice_B:/app
     depends_on:
       - rabbitmq
-    command: bash -c "python wait-for-rabbitmq.py && python app.py"
+    command: bash -c "python wait-for-rabbitmq.py && python src/app.py"
